@@ -4,7 +4,7 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавляем поддержку Ocelot
+// Р”РѕР±Р°РІР»СЏРµРј РїРѕРґРґРµСЂР¶РєСѓ Ocelot
 builder.Services.AddOcelot();
 builder.Services.AddLogging(logging =>
 {
@@ -12,12 +12,12 @@ builder.Services.AddLogging(logging =>
     logging.AddConsole();
 });
 
-// Загружаем конфигурацию Ocelot
+// Р—Р°РіСЂСѓР¶Р°РµРј РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ Ocelot
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
 var app = builder.Build();
 
-// Глобальный обработчик ошибок
+// Р“Р»РѕР±Р°Р»СЊРЅС‹Р№ РѕР±СЂР°Р±РѕС‚С‡РёРє РѕС€РёР±РѕРє
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
@@ -26,14 +26,14 @@ app.UseExceptionHandler(errorApp =>
         if (exceptionHandlerPathFeature?.Error != null)
         {
             var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-            logger.LogError(exceptionHandlerPathFeature.Error, "Ошибка в Ocelot API Gateway");
+            logger.LogError(exceptionHandlerPathFeature.Error, "РћС€РёР±РєР° РІ Ocelot API Gateway");
             context.Response.StatusCode = 500;
-            await context.Response.WriteAsync("Произошла внутренняя ошибка сервера");
+            await context.Response.WriteAsync("РџСЂРѕРёР·РѕС€Р»Р° РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°");
         }
     });
 });
 
-// Логирование (statusCode 400+) запросов
+// Р›РѕРіРёСЂРѕРІР°РЅРёРµ (statusCode 400+) Р·Р°РїСЂРѕСЃРѕРІ
 app.Use(async (context, next) =>
 {
     await next();
@@ -44,39 +44,39 @@ app.Use(async (context, next) =>
     switch (statusCode)
     {
         case 400:
-            logger.LogWarning($"Запрос 400 (Bad Request): {context.Request.Method} {context.Request.Path}");
+            logger.LogWarning($"Р—Р°РїСЂРѕСЃ 400 (Bad Request): {context.Request.Method} {context.Request.Path}");
             break;
         case 401:
-            logger.LogWarning($"Запрос 401 (Unauthorized): {context.Request.Method} {context.Request.Path}");
+            logger.LogWarning($"Р—Р°РїСЂРѕСЃ 401 (Unauthorized): {context.Request.Method} {context.Request.Path}");
             break;
         case 403:
-            logger.LogWarning($"Запрос 403 (Forbidden): {context.Request.Method} {context.Request.Path}");
+            logger.LogWarning($"Р—Р°РїСЂРѕСЃ 403 (Forbidden): {context.Request.Method} {context.Request.Path}");
             break;
         case 404:
-            logger.LogWarning($"Запрос 404 (Not Found): {context.Request.Method} {context.Request.Path}");
+            logger.LogWarning($"Р—Р°РїСЂРѕСЃ 404 (Not Found): {context.Request.Method} {context.Request.Path}");
             break;
         case 500:
-            logger.LogError($"Запрос 500 (Internal Server Error): {context.Request.Method} {context.Request.Path}");
+            logger.LogError($"Р—Р°РїСЂРѕСЃ 500 (Internal Server Error): {context.Request.Method} {context.Request.Path}");
             break;
         default:
             if (statusCode >= 400)
             {
-                logger.LogWarning($"Ошибка {statusCode}: {context.Request.Method} {context.Request.Path}");
+                logger.LogWarning($"РћС€РёР±РєР° {statusCode}: {context.Request.Method} {context.Request.Path}");
             }
             break;
     }
 
-    // Обработка 502 Bad Gateway
+    // РћР±СЂР°Р±РѕС‚РєР° 502 Bad Gateway
     if (statusCode == 502)
     {
-        logger.LogError($"Ошибка 502 (Bad Gateway): Сервис недоступен {context.Request.Method} {context.Request.Path}");
+        logger.LogError($"РћС€РёР±РєР° 502 (Bad Gateway): РЎРµСЂРІРёСЃ РЅРµРґРѕСЃС‚СѓРїРµРЅ {context.Request.Method} {context.Request.Path}");
 
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync("{\"error\": \"Сервис временно недоступен. Повторите попытку позже.\"}");
+        await context.Response.WriteAsync("{\"error\": \"РЎРµСЂРІРёСЃ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ РїРѕР·Р¶Рµ.\"}");
     }
 });
 
-// Подключаем Ocelot
+// РџРѕРґРєР»СЋС‡Р°РµРј Ocelot
 await app.UseOcelot();
 
 app.Run();
