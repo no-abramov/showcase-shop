@@ -1,0 +1,42 @@
+# Visual Studio
+.vs/
+*.vsidx
+*.suo
+*.user
+*.cache
+*.pdb
+*.db
+
+# Dotnet build files
+bin/
+obj/
+out/
+
+# Rider & VS Code
+.idea/
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+*.vsp
+*.vspscc
+*.vssscc
+*_Resharper.*
+*.tmd
+*.sln.docstates
+*.cache
+*.pdb
+*.db
+
+# Logs
+logs/
+*.log
+
+# Dependency directories
+node_modules/
+packages/
+
+# Docker
+*.dockerignore
+**/Dockerfile
