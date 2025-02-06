@@ -73,6 +73,10 @@
       "UpstreamHttpMethod": [ "POST" ]
     }
   ],
+  "HttpHandlerOptions": {
+    "UseTracing": true,
+    "AllowAutoRedirect": false
+  },
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:5244"
   }
